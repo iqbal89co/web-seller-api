@@ -173,7 +173,6 @@ class ProductSeeder extends Seeder
             if ($category && $brand) {
                 $product['category_id'] = $category->id;
                 $product['brand_id'] = $brand->id;
-                $product['writer_id'] = 1;
                 Product::create($product);
             }
         }
