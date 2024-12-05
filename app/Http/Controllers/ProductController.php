@@ -12,7 +12,7 @@ class ProductController extends Controller
 
     public function __invoke(Request $request)
     {
-        $products = Product::with('category', 'brand', 'writer')->orderBy('created_at', 'desc')->get();
+        $products = Product::with('category', 'brand')->orderBy('created_at', 'desc')->get();
         return response()->json([
             'message' => 'Data successfully retrieved',
             'data' => $products
@@ -21,7 +21,7 @@ class ProductController extends Controller
 
     public function detail(Request $request, $id)
     {
-        $product = Product::with('category', 'brand', 'writer')->find($id);
+        $product = Product::with('category', 'brand')->find($id);
         if (!$product) {
             return response()->json([
                 'error' => 'Product not found',
@@ -45,9 +45,9 @@ class ProductController extends Controller
             'selling_price' => 'required|integer',
         ]);
 
-        $data = $validatedData + ['writer_id' => auth()->user()->id];
+        $data = $validatedData;
         $newProduct = Product::create($data);
-        $product = Product::with('category', 'brand', 'writer')->find($newProduct->id);
+        $product = Product::with('category', 'brand')->find($newProduct->id);
         return response()->json([
             'message' => 'Product successfully added',
             'data' => $product
@@ -79,9 +79,8 @@ class ProductController extends Controller
         $product->category_id = $request->category_id;
         $product->brand_id = $request->brand_id;
         $product->selling_price = $request->selling_price;
-        $product->writer_id = auth()->user()->id;
         $product->save();
-        $updatedProduct = Product::with('category', 'brand', 'writer')->find($product->id);
+        $updatedProduct = Product::with('category', 'brand')->find($product->id);
         return response()->json([
             'message' => 'Product successfully updated',
             'data' => $updatedProduct

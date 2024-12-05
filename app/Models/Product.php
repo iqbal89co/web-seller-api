@@ -16,7 +16,6 @@ class Product extends Model
         'barcode',
         'category_id',
         'brand_id',
-        'writer_id',
         'selling_price'
     ];
 
@@ -28,10 +27,5 @@ class Product extends Model
     public function brand()
     {
         return $this->belongsTo(Brand::class);
-    }
-
-    public function writer()
-    {
-        return $this->belongsTo(User::class, 'writer_id', 'id');
     }
 }

@@ -40,3 +40,11 @@ if (!function_exists('format_rupiah')) {
         return 'Rp' . number_format($number, 0, ',', '.') . ',-';
     }
 }
+
+if (!function_exists('check_is_permitted')) {
+    function check_is_permitted($user, $permission)
+    {
+        $is_permitted = in_array($permission, $user->activeRole->permissions->map(fn($x) => $x['name'])->toArray());
+        return $is_permitted;
+    }
+}

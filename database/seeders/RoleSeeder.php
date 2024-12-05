@@ -17,6 +17,7 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('users')->truncate();
         DB::table('roles')->truncate();
         DB::table('role_user')->truncate();
         DB::table('permissions')->truncate();
@@ -30,32 +31,35 @@ class RoleSeeder extends Seeder
                 'name' => 'Administrator',
             ],
             [
-                'slug' => 'cashier',
-                'name' => 'Cashier',
-            ],
+                'slug' => 'customer',
+                'name' => 'Customer'
+            ]
         ]);
 
         Permission::insert([
             [
-                'name' => 'cashier'
+                'name' => 'checkout'
             ],
             [
-                'name' => 'manage-product'
+                'name' => 'manage-products'
             ],
             [
                 'name' => 'manage-transactions'
             ],
+            [
+                'name' => 'manage-master'
+            ]
         ]);
 
         $administrator = Role::where('name', 'administrator')->first();
 
         $administrator->permissions()->attach(
-            Permission::whereIn('name', ['cashier', 'manage-product', 'manage-transactions'])->pluck('id')
+            Permission::whereIn('name', ['checkout', 'manage-products', 'manage-transactions', 'manage-master'])->pluck('id')
         );
 
-        $cashier = Role::where('name', 'cashier')->first();
-        $cashier->permissions()->attach(
-            Permission::where('name', 'cashier')->pluck('id')
+        $customer = Role::where('name', 'customer')->first();
+        $customer->permissions()->attach(
+            Permission::where('name', 'checkout')->pluck('id')
         );
 
         $users = [
@@ -66,10 +70,10 @@ class RoleSeeder extends Seeder
                 'role'  => 'administrator'
             ],
             [
-                'name' => 'Cashier Testing',
-                'email' => 'cashier@testing.com',
+                'name' => 'Customer Testing',
+                'email' => 'customer@testing.com',
                 'password' => bcrypt('password'),
-                'role'  => 'cashier'
+                'role'  => 'customer'
             ],
         ];
         foreach ($users as $user) {
@@ -81,13 +85,13 @@ class RoleSeeder extends Seeder
             $newUser->email = $user['email'];
             $newUser->password = $user['password'];
             $newUser->save();
-            $newUser->roles()->attach($cashier->id);
+            $newUser->roles()->attach($customer->id);
 
             if ($user['role'] === 'administrator') {
                 $newUser->roles()->attach($administrator->id);
                 $newUser->active_role_id = $administrator->id;
             } else {
-                $newUser->active_role_id = $cashier->id;
+                $newUser->active_role_id = $customer->id;
             }
             $newUser->save();
         }

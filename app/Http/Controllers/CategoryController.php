@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\CategoryExport;
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
