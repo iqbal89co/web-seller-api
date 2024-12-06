@@ -36,14 +36,16 @@ class AuthController extends Controller
         DB::beginTransaction();
 
         try {
-            $user = User::create([
-                'name' => $request->get('name'),
-                'email' => $request->get('email'),
-                'password' => bcrypt($request->get('password')),
-            ]);
+            $user = new User();
+            $user->name = $request->get('name');
+            $user->email = $request->get('email');
+            $user->password = bcrypt($request->get('password'));
+            $user->save();
 
             $userRole = Role::where('slug', 'customer')->first();
             $user->roles()->attach($userRole);
+            $user->active_role_id = $userRole->id;
+            $user->save();
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
